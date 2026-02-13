@@ -1,102 +1,336 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Prueba Técnica - Web Scraping Junior</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            line-height: 1.6;
-        }
-        h1, h2 {
-            color: #0a3d62;
-        }
-        .section {
-            margin-bottom: 30px;
-        }
-        .box {
-            background-color: #f4f6f8;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prueba Técnica – Web Scraping (Obtención de Leads)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a33;
+      --text:#e7edf7;
+      --muted:#b9c6db;
+      --accent:#61dafb;
+      --border:rgba(255,255,255,.10);
+      --code:#0a0f1c;
+      --ok:#42d392;
+      --warn:#ffcc66;
+    }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(900px 500px at 15% 10%, rgba(97,218,251,.18), transparent 55%),
+                  radial-gradient(900px 500px at 85% 10%, rgba(66,211,146,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    .container{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+    header{
+      padding: 10px 0 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+    h1{
+      font-size: 28px;
+      margin: 0 0 8px;
+      letter-spacing: .2px;
+    }
+    .subtitle{
+      color:var(--muted);
+      margin:0;
+      font-size: 15px;
+    }
+    .badge{
+      display:inline-block;
+      padding:4px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      margin-right:8px;
+      background: rgba(255,255,255,.03);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (min-width: 860px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+    section{
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      backdrop-filter: blur(6px);
+    }
+    h2{
+      margin: 0 0 10px;
+      font-size: 18px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    h2 span.icon{
+      width:28px;
+      height:28px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255,255,255,.03);
+      color: var(--accent);
+      font-weight: 700;
+    }
+    p, li{
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ul, ol{
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
+    .note{
+      border-left: 4px solid var(--warn);
+      padding: 10px 12px;
+      background: rgba(255,204,102,.08);
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+    .ok{
+      border-left: 4px solid var(--ok);
+      background: rgba(66,211,146,.08);
+    }
+    code, pre{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+    }
+    pre{
+      padding: 12px;
+      overflow:auto;
+      margin: 10px 0 0;
+      background: var(--code);
+    }
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      overflow:hidden;
+      border-radius: 12px;
+      border:1px solid var(--border);
+    }
+    th, td{
+      text-align:left;
+      padding: 10px 10px;
+      border-bottom:1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    th{
+      color: var(--text);
+      background: rgba(255,255,255,.04);
+      font-weight: 650;
+    }
+    a{
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover{ text-decoration: underline; }
+    .full{
+      grid-column: 1 / -1;
+    }
+    .pill{
+      display:inline-block;
+      font-size:12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      margin-top: 6px;
+    }
+    footer{
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      opacity: .9;
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <header>
+      <div class="badge">🧪 Prueba Técnica</div>
+      <div class="badge">Web Scraping</div>
+      <div class="badge">Walmart México</div>
+      <h1>Prueba Técnica – Web Scraping (Obtención de Leads)</h1>
+      <p class="subtitle">
+        Desarrollar un script que realice un web scraping básico sobre la plataforma de Walmart México,
+        con el fin de obtener un mínimo de <strong>50 leads por categoría principal</strong>.
+      </p>
+    </header>
 
-<h1>🧪 Prueba Técnica – Web Scraping (Perfil Junior)</h1>
+    <div class="grid">
+      <section>
+        <h2><span class="icon">🎯</span>Objetivo</h2>
+        <p>
+          Desarrollar un script que realice un scraping básico sobre Walmart México para recolectar productos (leads)
+          a partir del listado de categorías y subcategorías proporcionado.
+        </p>
+        <p class="pill">Mínimo: 50 productos por categoría principal</p>
+      </section>
 
-<div class="section">
-    <h2>🎯 Objetivo</h2>
-    <p>
-        Desarrollar un script que realice un web scraping básico sobre la plataforma de Walmart México 
-        para obtener información de productos (leads) a partir de las categorías y subcategorías proporcionadas.
-    </p>
-    <p><strong>Se prioriza el resultado sobre la sofisticación del código.</strong></p>
-</div>
-
-<div class="section">
-    <h2>📊 Requerimientos</h2>
-    <ul>
-        <li>Mínimo 50 productos por categoría principal</li>
-        <li>Total mínimo esperado: 150 productos</li>
-        <li>Manejar paginación si es necesario</li>
-        <li>Evitar duplicados</li>
-        <li>Script reproducible</li>
-    </ul>
-</div>
-
-<div class="section">
-    <h2>📁 Estructura del resultado</h2>
-    <div class="box">
-        <p><strong>Campos obligatorios:</strong></p>
+      <section>
+        <h2><span class="icon">✅</span>Se evaluará</h2>
         <ul>
-            <li>Categoría</li>
-            <li>Subcategoría</li>
-            <li>Keyword (Nombre del producto)</li>
-            <li>Seller</li>
-            <li>URL</li>
+          <li>Capacidad de scraping web</li>
+          <li>Limpieza y estructuración de datos</li>
+          <li>Organización del código</li>
+          <li>Buenas prácticas</li>
+          <li>Documentación</li>
         </ul>
+      </section>
+
+      <section class="full">
+        <h2><span class="icon">📂</span>Categorías a trabajar</h2>
+
+        <h3 style="margin:10px 0 6px; font-size:16px;">1️⃣ Limpieza del Hogar</h3>
+        <ul>
+          <li>Desechables</li>
+          <li>Limpieza de cocina</li>
+          <li>Productos de limpieza</li>
+          <li>Accesorios de limpieza</li>
+          <li>Aromatizantes e Insecticidas</li>
+          <li>Desinfectantes</li>
+        </ul>
+
+        <h3 style="margin:14px 0 6px; font-size:16px;">2️⃣ Cuidado de la Ropa</h3>
+        <ul>
+          <li>Detergentes</li>
+          <li>Cloro</li>
+          <li>Suavizantes, Almidón y Colorantes</li>
+          <li>Prelavadores y Quitamanchas</li>
+        </ul>
+
+        <h3 style="margin:14px 0 6px; font-size:16px;">3️⃣ Belleza</h3>
+        <ul>
+          <li>Destacados Belleza</li>
+          <li>Perfumes y Lociones</li>
+          <li>Cuidado Facial</li>
+          <li>Sets de Maquillaje</li>
+          <li>Manicure y Uñas</li>
+          <li>Accesorios de Maquillaje</li>
+          <li>Dermocosméticos</li>
+          <li>Spa y Masaje</li>
+          <li>Depilación y Rasurado</li>
+          <li>Maquillaje para Rostro</li>
+          <li>Maquillaje de Labios</li>
+          <li>Maquillaje para Ojos</li>
+        </ul>
+      </section>
+
+      <section class="full">
+        <h2><span class="icon">📊</span>Requerimientos de extracción</h2>
+        <p>Para cada producto (lead) se deberá obtener como mínimo:</p>
+        <ul>
+          <li><strong>Keyword</strong> (nombre del producto)</li>
+          <li><strong>Seller</strong> (vendedor)</li>
+          <li><strong>URL</strong> (enlace completo al producto)</li>
+        </ul>
+
+        <div class="note ok">
+          <strong>📌 Ejemplo de resultado esperado</strong>
+          <pre>Keyword: cubiertos
+Seller: AMBIENT 21
+URL: https://www.walmart.com.mx/ip/juego-de-cubiertos-azul-17-piezas-con-soporte-acero-inoxidable-y-mango-ergonomico-incluye-cuchillos-tenedores-y-cucharas-organizacion-y-estilo-en-tu-cocina/00489185601199</pre>
+        </div>
+      </section>
+
+      <section>
+        <h2><span class="icon">📈</span>Requisitos mínimos</h2>
+        <ul>
+          <li>Extraer mínimo <strong>50 productos por categoría principal</strong>.</li>
+          <li>Manejar paginación si es necesario.</li>
+          <li>Evitar duplicados.</li>
+          <li>Entregar datos estructurados.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><span class="icon">📑</span>Formato de entrega</h2>
+        <ol>
+          <li>
+            <strong>Sheet con resultados</strong> (Google Sheets o archivo).
+            <div class="pill">Columnas requeridas: Categoría, Subcategoría, Keyword, Seller, URL</div>
+          </li>
+          <li style="margin-top:8px;">
+            <strong>Código utilizado</strong> (Python, Node.js, etc.) + librerías + instrucciones de ejecución.
+          </li>
+        </ol>
+      </section>
+
+      <section class="full">
+        <h2><span class="icon">📄</span>Estructura del Sheet</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Categoría</th>
+              <th>Subcategoría</th>
+              <th>Keyword</th>
+              <th>Seller</th>
+              <th>URL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Limpieza del Hogar</td>
+              <td>Desechables</td>
+              <td>cubiertos</td>
+              <td>AMBIENT 21</td>
+              <td><a href="https://www.walmart.com.mx/ip/juego-de-cubiertos-azul-17-piezas-con-soporte-acero-inoxidable-y-mango-ergonomico-incluye-cuchillos-tenedores-y-cucharas-organizacion-y-estilo-en-tu-cocina/00489185601199" target="_blank" rel="noopener">Ver producto</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2><span class="icon">⭐</span>Plus (puntos extra)</h2>
+        <ul>
+          <li>Código con comentarios claros</li>
+          <li>Manejo de errores (try/except)</li>
+          <li>Estructura modular</li>
+          <li>README explicativo</li>
+          <li>Manejo de user-agent o headers</li>
+          <li>Exportación automática al Sheet</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2><span class="icon">⚠️</span>Consideraciones</h2>
+        <div class="note">
+          <ul style="margin-top:0;">
+            <li>Respetar la estructura del sitio.</li>
+            <li>No es necesario desplegar en producción.</li>
+            <li>Se evaluará claridad y calidad del código y el resultado final.</li>
+          </ul>
+        </div>
+      </section>
     </div>
-</div>
 
-<div class="section">
-    <h2>📈 Criterios de Evaluación</h2>
-    <table>
-        <tr>
-            <th>Criterio</th>
-            <th>Peso</th>
-        </tr>
-        <tr>
-            <td>Resultado</td>
-            <td>60%</td>
-        </tr>
-        <tr>
-            <td>Código</td>
-            <td>40%</td>
-        </tr>
-    </table>
-</div>
-
-<div class="section">
-    <h2>📦 Entregables</h2>
-    <ul>
-        <li>Archivo Google Sheets con los resultados</li>
-        <li>Código utilizado</li>
-        <li>Instrucciones básicas de ejecución</li>
-    </ul>
-</div>
-
+    <footer>
+      Si quieres, también puedo adaptarlo a tu estilo (Bootstrap/Tailwind), o dejarlo como componente (React/Next.js).
+    </footer>
+  </div>
 </body>
 </html>
